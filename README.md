@@ -1,22 +1,13 @@
-# Nhóm 3
-# Đề tài: Website bán hàng trực tuyến
-<h3>Link demo: https://taphoashop.herokuapp.com/</h3>
+# Đề tài: Website tiệm bánh pizza
 <h3>Thành viên nhóm: </h3>
-<h6>+ Võ Hữu Thắng</h6>
-<h6>+ Nguyễn Văn Hải Long</h6>
-<h6>+ Nguyễn Quốc Thắng</h6>
+<h6>+ Nguyễn Tấn Phát</h6>
+<h6>+ Nguyễn Thảo Trâm</h6>
+<h6>+ Trần Chí Khanh</h6>
 
 Phiên bản Node.js sử dụng là Node.js: [v16.13.1](https://nodejs.org/dist/v16.13.1/node-v16.13.1-x86.msi) (hoặc phiên bản v16 cùng cấp)
 
 ![screenshot](https://github.com/huuthang28cb/Nhom3_IVS_ThucTapChuyenNganh/blob/master/frontend/public/images/home.PNG)
 
-## Hướng phát triển trong tương lai:
--	Áp dụng công nghệ như AI, Machine Learning để gợi ý sản phẩm cho khách hàng
--	Sử dụng Machine Learning để thống kê
--	Tích hợp và hỗ trợ khách hàng tìm kiếm sản phẩm bằng hình ảnh và giọng nói
--	Cải thiện kết quả tìm kiếm
--	Sử dụng Machine Learning để dự đoán nhu cầu mua hàng hóa của khách hàng
--	Cải thiện giao diện người dùng, hỗ trợ lọc sản phẩm nâng cao
 
 ### Hướng dẫn cài đặt thư viện hỗ trợ đề tài (frontend & backend)
 <h5>Vào terminal và thực hiện</h5>
@@ -43,11 +34,11 @@ npm run prod
 # Tài khoản đăng nhập vào website:
 ```
 + Khách hàng
-	Tài khoản: thang@gmail.com
-	Mật khẩu: 123456
+	Tài khoản: 
+	Mật khẩu: 
 + Quản trị
-	Tài khoản: admin@gmail.com
-	Mật khẩu: 123456
+	Tài khoản: 
+	Mật khẩu: 
 ```
 
 # Thông tin thẻ để test thanh toán:
@@ -58,9 +49,6 @@ HẠN THẺ: 12/34
 CVC: 567
 
 ```
-# Video hướng dẫn chi tiết:
-Nhấn tại đây: [Xem video hướng dẫn chi tiết chạy chương trình](https://drive.google.com/file/d/1CTjpY9v9h3TU0Xj16wziNMQJuZRwl0_b/view?usp=sharing)
-
 <p align="center">
 	<img src="https://i.pinimg.com/originals/56/a7/b8/56a7b8e4953907848148e15efa28ae81.gif" width = "500" alt="TNT">
 	</a>
