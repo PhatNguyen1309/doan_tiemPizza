@@ -6,8 +6,6 @@
 
 Phiên bản Node.js sử dụng là Node.js: [v16.13.1](https://nodejs.org/dist/v16.13.1/node-v16.13.1-x86.msi) (hoặc phiên bản v16 cùng cấp)
 
-![screenshot](https://github.com/huuthang28cb/Nhom3_IVS_ThucTapChuyenNganh/blob/master/frontend/public/images/home.PNG)
-
 
 ### Hướng dẫn cài đặt thư viện hỗ trợ đề tài (frontend & backend)
 <h5>Vào terminal và thực hiện</h5>
