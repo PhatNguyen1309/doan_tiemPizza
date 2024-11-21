@@ -15,6 +15,8 @@ const ProductDetails = ({ match }) => {
     const [quantity, setQuantity] = useState(1);
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
+    const [size, setSize] = useState('');
+    const [crust, setCrust] = useState(''); // Thêm state cho đế bánh
 
     const dispatch = useDispatch();
     const alert = useAlert();
@@ -43,73 +45,63 @@ const ProductDetails = ({ match }) => {
     }, [dispatch, alert, error, reviewError, match.params.id, success]);
 
     const addToCart = () => {
-        dispatch(addItemToCart(match.params.id, quantity));
+        if (!size || !crust) {
+            alert.error("Vui lòng chọn kích thước và loại đế.");
+            return;
+        }
+
+        const price = getFormattedPrice();
+
+        dispatch(addItemToCart(match.params.id, quantity, size, crust, price)); // Truyền thông tin đế bánh vào
         alert.success('Đã thêm vào giỏ hàng');
     };
 
     const increaseQty = () => {
-        setQuantity(prevQuantity => {
-            const newQty = Math.min(prevQuantity + 1, product.stock);
-            return newQty;
-        });
+        setQuantity(prevQuantity => Math.min(prevQuantity + 1, product.stock));
     };
 
     const decreaseQty = () => {
-        setQuantity(prevQuantity => {
-            const newQty = Math.max(prevQuantity - 1, 1);
-            return newQty;
-        });
+        setQuantity(prevQuantity => Math.max(prevQuantity - 1, 1));
     };
 
-    function setUserRatings() {
-        const stars = document.querySelectorAll('.star');
+    const setUserRatings = () => {
+        setRating(0);
+        setComment('');
+    };
 
-        stars.forEach((star, index) => {
-            star.starValue = index + 1;
-
-            ['click', 'mouseover', 'mouseout'].forEach(function (e) {
-                star.addEventListener(e, showRatings);
-            });
-        });
-
-        function showRatings(e) {
-            stars.forEach((star, index) => {
-                if (e.type === 'click') {
-                    if (index < this.starValue) {
-                        star.classList.add('orange');
-                        setRating(this.starValue);
-                    } else {
-                        star.classList.remove('orange');
-                    }
-                }
-
-                if (e.type === 'mouseover') {
-                    if (index < this.starValue) {
-                        star.classList.add('yellow');
-                    } else {
-                        star.classList.remove('yellow');
-                    }
-                }
-
-                if (e.type === 'mouseout') {
-                    star.classList.remove('yellow');
-                }
-            });
-        }
-    }
+    const handleStarClick = (starValue) => {
+        setRating(starValue);
+    };
 
     const reviewHandler = () => {
-        const formData = new FormData();
+        if (rating === 0) {
+            alert.error("Vui lòng chọn số sao để đánh giá");
+            return;
+        }
 
-        formData.set('rating', rating);
-        formData.set('comment', comment);
-        formData.set('productId', match.params.id);
+        const reviewData = {
+            rating,
+            comment,
+            productId: match.params.id,
+        };
 
-        dispatch(newReview(formData));
+        dispatch(newReview(reviewData));
     };
 
-    // Format the price with commas
-    const formattedPrice = product.price ? product.price.toLocaleString() : '0';
+    const getFormattedPrice = () => {
+        const basePrice = product.price || 0;
+        let finalPrice = basePrice;
+
+        if (size === "12 inch") {
+            finalPrice *= 1.3; // Tăng giá lên 30% nếu chọn 12 inch
+        }
+
+        if (crust === "Thick") {
+            finalPrice += 30000; // Tăng giá thêm 30,000 nếu chọn đế dày
+        }
+
+        return finalPrice.toLocaleString();
+    };
 
     return (
         <Fragment>
@@ -138,14 +130,69 @@ const ProductDetails = ({ match }) => {
                             <span id="no_of_reviews">({product.numOfReviews} đánh giá)</span>
 
                             <hr />
-                            <p id="product_price">{formattedPrice}đ</p>
+                            <p id="product_price">{getFormattedPrice()}đ</p>
                             <div className="stockCounter d-inline">
                                 <span className="btn btn-danger minus" onClick={decreaseQty}>-</span>
-
                                 <input type="number" className="form-control count d-inline" value={quantity} readOnly />
-
                                 <span className="btn btn-primary plus" onClick={increaseQty}>+</span>
                             </div>
+
+                            <div className="sizeSelector mt-3">
+                                <label>Kích thước:</label>
+                                <div className="form-check">
+                                    <input
+                                        type="radio"
+                                        id="size9"
+                                        name="size"
+                                        value="9 inch"
+                                        checked={size === "9 inch"}
+                                        onChange={(e) => setSize(e.target.value)}
+                                        className="form-check-input"
+                                    />
+                                    <label htmlFor="size9" className="form-check-label">9 inch</label>
+                                </div>
+                                <div className="form-check">
+                                    <input
+                                        type="radio"
+                                        id="size12"
+                                        name="size"
+                                        value="12 inch"
+                                        checked={size === "12 inch"}
+                                        onChange={(e) => setSize(e.target.value)}
+                                        className="form-check-input"
+                                    />
+                                    <label htmlFor="size12" className="form-check-label">12 inch</label>
+                                </div>
+                            </div>
+
+                            <div className="crustSelector mt-3">
+                                <label>Loại đế:</label>
+                                <div className="form-check">
+                                    <input
+                                        type="radio"
+                                        id="thinCrust"
+                                        name="crust"
+                                        value="Thin"
+                                        checked={crust === "Thin"}
+                                        onChange={(e) => setCrust(e.target.value)}
+                                        className="form-check-input"
+                                    />
+                                    <label htmlFor="thinCrust" className="form-check-label">Mỏng</label>
+                                </div>
+                                <div className="form-check">
+                                    <input
+                                        type="radio"
+                                        id="thickCrust"
+                                        name="crust"
+                                        value="Thick"
+                                        checked={crust === "Thick"}
+                                        onChange={(e) => setCrust(e.target.value)}
+                                        className="form-check-input"
+                                    />
+                                    <label htmlFor="thickCrust" className="form-check-label">Dày</label>
+                                </div>
+                            </div>
+
                             <button
                                 type="button"
                                 id="cart_btn"
@@ -157,9 +204,7 @@ const ProductDetails = ({ match }) => {
                             </button>
 
                             <hr />
-
                             <p>Tình trạng hàng: <span id="stock_status" className={product.stock > 1 ? 'greenColor' : 'redColor'} >{product.stock > 1 ? 'Còn hàng' : 'Hết hàng'}</span></p>
-
                             <hr />
 
                             <h4 className="mt-2">Mô tả:</h4>
@@ -176,7 +221,6 @@ const ProductDetails = ({ match }) => {
 
                             <div className="row mt-2 mb-5">
                                 <div className="rating w-50">
-
                                     <div className="modal fade" id="ratingModal" tabIndex="-1" role="dialog" aria-labelledby="ratingModalLabel" aria-hidden="true">
                                         <div className="modal-dialog" role="document">
                                             <div className="modal-content">
@@ -187,38 +231,44 @@ const ProductDetails = ({ match }) => {
                                                     </button>
                                                 </div>
                                                 <div className="modal-body">
-
-                                                    <ul className="stars" >
-                                                        <li className="star"><i className="fa fa-star"></i></li>
-                                                        <li className="star"><i className="fa fa-star"></i></li>
-                                                        <li className="star"><i className="fa fa-star"></i></li>
-                                                        <li className="star"><i className="fa fa-star"></i></li>
-                                                        <li className="star"><i className="fa fa-star"></i></li>
+                                                    <ul className="stars">
+                                                        {[...Array(5)].map((_, index) => (
+                                                            <li
+                                                                key={index}
+                                                                className={`star ${index + 1 <= rating ? 'filled' : ''}`}
+                                                                onClick={() => handleStarClick(index + 1)}
+                                                            >
+                                                                <i className="fa fa-star"></i>
+                                                            </li>
+                                                        ))}
                                                     </ul>
-
                                                     <textarea
-                                                        name="review"
-                                                        id="review" className="form-control mt-3"
+                                                        id="review_comment"
+                                                        className="form-control mt-3"
                                                         value={comment}
                                                         onChange={(e) => setComment(e.target.value)}
                                                     ></textarea>
-                                                    <button className="btn my-3 float-right review-btn px-4 bg-primary" onClick={reviewHandler} data-dismiss="modal" aria-label="Close">Gửi bình luận</button>
+
+                                                    <button
+                                                        className="btn my-3 float-right review-btn px-4 text-white"
+                                                        onClick={reviewHandler}
+                                                        data-dismiss="modal"
+                                                        aria-label="Close"
+                                                    >
+                                                        Đánh giá
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className='container'>
-                        {product.reviews && product.reviews.length > 0 && (
-                            <ListReviews reviews={product.reviews} />
-                        )}
-                    </div>
-
+                    {product.reviews && product.reviews.length > 0 && (
+                        <ListReviews reviews={product.reviews} />
+                    )}
                 </Fragment>
             )}
         </Fragment>

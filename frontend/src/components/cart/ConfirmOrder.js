@@ -13,7 +13,7 @@ const ConfirmOrder = ({ history }) => {
 
     // Calculate Order Prices
     const itemsPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0) // giống giống như for, foreach
-    const shippingPrice = itemsPrice > 100000 ? 0 : 10000 // tính tiền ship
+    const shippingPrice = itemsPrice > 150000 ? 0 : 10000 // tính tiền ship
     const taxPrice = Number((0.01 * itemsPrice)) // tính thuế
     const totalPrice = (itemsPrice + shippingPrice + taxPrice) // tổng tiền
 

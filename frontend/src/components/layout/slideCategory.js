@@ -4,7 +4,7 @@ class slideCategory extends Component {
     render() {
         return (
             <div>
-                hihi
+                
             </div>
         );
     }

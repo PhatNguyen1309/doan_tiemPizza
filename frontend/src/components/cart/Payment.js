@@ -1,183 +1,213 @@
-import React, { Fragment, useEffect } from 'react'
+import React, { Fragment, useEffect, useState } from 'react';
 
-import MetaData from '../layout/MetaData'
-import CheckoutSteps from './CheckoutSteps'
+import MetaData from '../layout/MetaData';
+import CheckoutSteps from './CheckoutSteps';
 
-import { useAlert } from 'react-alert'
-import { useDispatch, useSelector } from 'react-redux'
-import { createOrder, clearErrors } from '../../actions/orderActions'
+import { useAlert } from 'react-alert';
+import { useDispatch, useSelector } from 'react-redux';
+import { createOrder, clearErrors } from '../../actions/orderActions';
 
-import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js'
+import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js';
 
-import axios from 'axios'
+import axios from 'axios';
 
 const options = {
     style: {
         base: {
-            fontSize: '16px'
+            fontSize: '16px',
         },
         invalid: {
-            color: '#9e2146'
-        }
-    }
-}
+            color: '#9e2146',
+        },
+    },
+};
 
 const Payment = ({ history }) => {
+    const [paymentMethod, setPaymentMethod] = useState('card'); // Mặc định là thẻ
 
     const alert = useAlert();
     const stripe = useStripe();
     const elements = useElements();
     const dispatch = useDispatch();
 
-    const { user } = useSelector(state => state.auth)
-    const { cartItems, shippingInfo } = useSelector(state => state.cart);
-    const { error } = useSelector(state => state.newOrder)
+    const { user } = useSelector((state) => state.auth);
+    const { cartItems, shippingInfo } = useSelector((state) => state.cart);
+    const { error } = useSelector((state) => state.newOrder);
 
     useEffect(() => {
-
         if (error) {
-            alert.error(error)
-            dispatch(clearErrors())
+            alert.error(error);
+            dispatch(clearErrors());
         }
+    }, [dispatch, alert, error]);
 
-    }, [dispatch, alert, error])
-
-    // cart, ship info
+    // Chuẩn bị thông tin đơn hàng
     const order = {
         orderItems: cartItems,
-        shippingInfo
-    }
+        shippingInfo,
+    };
 
     const orderInfo = JSON.parse(sessionStorage.getItem('orderInfo'));
     if (orderInfo) {
-        order.itemsPrice = orderInfo.itemsPrice
-        order.shippingPrice = orderInfo.shippingPrice
-        order.taxPrice = orderInfo.taxPrice
-        order.totalPrice = orderInfo.totalPrice
+        order.itemsPrice = orderInfo.itemsPrice;
+        order.shippingPrice = orderInfo.shippingPrice;
+        order.taxPrice = orderInfo.taxPrice;
+        order.totalPrice = orderInfo.totalPrice;
     }
 
     const paymentData = {
-        amount: Math.round(orderInfo.totalPrice)  // total price
-    }
+        amount: Math.round(orderInfo.totalPrice), // Giá trị thanh toán
+    };
 
     const submitHandler = async (e) => {
         e.preventDefault();
 
-        document.querySelector('#pay_btn').disabled = true; // tìm kiếm các phần tử dựa trên id
+        if (paymentMethod === 'card') {
+            // Xử lý thanh toán qua thẻ
+            document.querySelector('#pay_btn').disabled = true;
 
-        let res;
-        try {
+            try {
+                const config = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                };
 
-            const config = { // config header type
-                headers: {
-                    'Content-Type': 'application/json'
+                const res = await axios.post('/api/v1/payment/process', paymentData, config);
+
+                const clientSecret = res.data.client_secret;
+
+                if (!stripe || !elements) {
+                    return;
                 }
-            }
 
-            res = await axios.post('/api/v1/payment/process', paymentData, config) // call api paymant process
+                const result = await stripe.confirmCardPayment(clientSecret, {
+                    payment_method: {
+                        card: elements.getElement(CardNumberElement),
+                        billing_details: {
+                            name: user.name,
+                            email: user.email,
+                        },
+                    },
+                });
 
-            const clientSecret = res.data.client_secret; // client_secret json client
-
-            console.log(clientSecret);
-
-            if (!stripe || !elements) { // data input payment stripe
-                return;
-            }
-
-            const result = await stripe.confirmCardPayment(clientSecret, { // Xác thực card info
-                payment_method: {
-                    card: elements.getElement(CardNumberElement),
-                    billing_details: { // chi tiết thanh toán
-                        name: user.name,
-                        email: user.email
-                    }
-                }
-            });
-
-            if (result.error) {
-                alert.error(result.error.message); // return alert error
-                document.querySelector('#pay_btn').disabled = false; // disabled btn
-            } else {
-
-                // Thanh toán có được xử lý hay không?
-                if (result.paymentIntent.status === 'succeeded') { // if success
-
-                    order.paymentInfo = {  // payment with info cart, shipInfo
-                        id: result.paymentIntent.id,
-                        status: result.paymentIntent.status
-                    }
-
-                    dispatch(createOrder(order)) // call createOrder action
-
-                    history.push('/success') // return page success
+                if (result.error) {
+                    alert.error(result.error.message);
+                    document.querySelector('#pay_btn').disabled = false;
                 } else {
-                    alert.error('Có một số vấn đề trong khi xử lý thanh toán')
+                    if (result.paymentIntent.status === 'succeeded') {
+                        order.paymentInfo = {
+                            id: result.paymentIntent.id,
+                            status: result.paymentIntent.status,
+                        };
+
+                        dispatch(createOrder(order));
+
+                        history.push('/success');
+                    } else {
+                        alert.error('Có một số vấn đề trong khi xử lý thanh toán');
+                    }
                 }
+            } catch (error) {
+                document.querySelector('#pay_btn').disabled = false;
+                alert.error(error.response.data.message);
             }
+        } else if (paymentMethod === 'cod') {
+            // Xử lý thanh toán COD
+            order.paymentInfo = {
+                id: 'COD',
+                status: 'Pending',
+            };
 
-
-        } catch (error) { // error server
-            document.querySelector('#pay_btn').disabled = false;
-            alert.error(error.response.data.message)
+            dispatch(createOrder(order));
+            history.push('/success');
         }
-    }
+    };
 
     return (
         <Fragment>
-            <MetaData title={'Thông tin thẻ'} />
+            <MetaData title={'Thông tin thanh toán'} />
 
             <CheckoutSteps shipping confirmOrder payment />
 
             <div className="row wrapper">
                 <div className="col-10 col-lg-5">
                     <form className="shadow-lg" onSubmit={submitHandler}>
-                        <h1 className="mb-4">Thông tin thẻ</h1>
+                        <h1 className="mb-4">Chọn phương thức thanh toán</h1>
+
                         <div className="form-group">
-                            <label htmlFor="card_num_field">Số thẻ</label>
-                            <CardNumberElement
-                                type="text"
-                                id="card_num_field"
-                                className="form-control"
-                                options={options}
-                            />
+                            <label htmlFor="payment_card">
+                                <input
+                                    type="radio"
+                                    id="payment_card"
+                                    name="paymentMethod"
+                                    value="card"
+                                    checked={paymentMethod === 'card'}
+                                    onChange={(e) => setPaymentMethod(e.target.value)}
+                                />
+                                Thanh toán qua thẻ
+                            </label>
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="card_exp_field">Hạn thẻ</label>
-                            <CardExpiryElement
-                                type="text"
-                                id="card_exp_field"
-                                className="form-control"
-                                options={options}
-                            />
+                            <label htmlFor="payment_cod">
+                                <input
+                                    type="radio"
+                                    id="payment_cod"
+                                    name="paymentMethod"
+                                    value="cod"
+                                    checked={paymentMethod === 'cod'}
+                                    onChange={(e) => setPaymentMethod(e.target.value)}
+                                />
+                                Thanh toán tiền mặt khi nhận hàng
+                            </label>
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="card_cvc_field">Số CVC</label>
-                            <CardCvcElement
-                                type="text"
-                                id="card_cvc_field"
-                                className="form-control"
-                                options={options}
-                            />
-                        </div>
+                        {paymentMethod === 'card' && (
+                            <Fragment>
+                                <div className="form-group">
+                                    <label htmlFor="card_num_field">Số thẻ</label>
+                                    <CardNumberElement
+                                        id="card_num_field"
+                                        className="form-control"
+                                        options={options}
+                                    />
+                                </div>
 
+                                <div className="form-group">
+                                    <label htmlFor="card_exp_field">Hạn thẻ</label>
+                                    <CardExpiryElement
+                                        id="card_exp_field"
+                                        className="form-control"
+                                        options={options}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label htmlFor="card_cvc_field">Số CVC</label>
+                                    <CardCvcElement
+                                        id="card_cvc_field"
+                                        className="form-control"
+                                        options={options}
+                                    />
+                                </div>
+                            </Fragment>
+                        )}
 
                         <button
                             id="pay_btn"
                             type="submit"
                             className="btn btn-block py-3"
                         >
-                            Thanh toán {` - ${(orderInfo && orderInfo.totalPrice).toLocaleString()}`}đ
-
+                            {paymentMethod === 'card'
+                                ? `Thanh toán qua thẻ - ${orderInfo.totalPrice.toLocaleString()}đ`
+                                : 'Xác nhận đơn hàng COD'}
                         </button>
-
                     </form>
                 </div>
             </div>
-
         </Fragment>
-    )
-}
+    );
+};
 
-export default Payment
+export default Payment;

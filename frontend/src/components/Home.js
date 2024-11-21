@@ -33,8 +33,6 @@ const Home = ({ match }) => {
         'Khai vị',
         "Đồ uống",
         'Tráng miệng'
-        // 'Chăm sóc mẹ và bé',
-        // 'Thể thao'
     ]
 
     const alert = useAlert();
@@ -69,7 +67,7 @@ const Home = ({ match }) => {
             <slideCategoryy />
             <Sliderr />
             <br />
-            <h3 className='text-center'>Danh mục sản phẩm</h3>
+            <h3 className='text-center'></h3>
             <div id="products_heading" className='container container-fluid'>
                 <ul id="ul_top_hypers">
                     {categories.map(category => (
@@ -105,7 +103,7 @@ const Home = ({ match }) => {
                     <MetaData title={'Website bán hàng trực tuyến'} />
                     
                     <h1 id="products_heading" className="container container-fluid">&emsp;&emsp;&emsp;</h1>
-                    <h3 className='text-center'>Sản phẩm</h3>
+                    <h3 className='text-center'></h3>
 
                     <section id="products" className="container mt-5">
                         {<div className="row">

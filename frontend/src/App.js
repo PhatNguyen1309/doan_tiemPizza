@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
+import About from './components/layout/About';
 
 import Home from './components/Home'
 import ProductDetails from './components/product/ProductDetails'
@@ -70,6 +71,7 @@ function App() {
           <Route path="/" component={Home} exact />
           <Route path="/search/:keyword" component={Home} />
           <Route path="/product/:id" component={ProductDetails} exact />
+          <Route path="/about" component={About} exact />
 
           {!loading && (!isAuthenticated || user.role !== 'staff') && (
             <Route path="/cart" component={Cart} exact />       
