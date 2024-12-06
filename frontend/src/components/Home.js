@@ -100,7 +100,7 @@ const Home = ({ match }) => {
             </div> */}
             {loading ? <Loader /> : (
                 <Fragment>
-                    <MetaData title={'Website bán hàng trực tuyến'} />
+                    <MetaData title={'Pizza KPT'} />
                     
                     <h1 id="products_heading" className="container container-fluid">&emsp;&emsp;&emsp;</h1>
                     <h3 className='text-center'></h3>

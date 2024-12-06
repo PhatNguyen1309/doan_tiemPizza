@@ -86,12 +86,19 @@ exports.updateOrder = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler('Bạn đã giao đơn đặt hàng này', 400))
     }
 
+    // Cập nhật trạng thái thanh toán nếu phương thức thanh toán là COD và trạng thái đơn hàng là "Đã giao hàng"
+    if (req.body.status === 'Đã giao hàng' && order.paymentInfo.method === 'COD') {
+        order.paymentStatus = 'Đã thanh toán'; // Cập nhật trạng thái thanh toán
+    }
+
+    // Cập nhật số lượng kho hàng
     order.orderItems.forEach(async item => {
         await updateStock(item.product, item.quantity)
     })
 
-    order.orderStatus = req.body.status,
-        order.deliveredAt = Date.now()
+    // Cập nhật trạng thái đơn hàng và thời gian giao hàng
+    order.orderStatus = req.body.status;
+    order.deliveredAt = Date.now();
 
     await order.save()
 

@@ -20,6 +20,9 @@ const Dashboard = () => {
     const { products } = useSelector(state => state.products)
     const { users } = useSelector(state => state.allUsers)
     const { orders, totalAmount, loading } = useSelector(state => state.allOrders)
+    const { user } = useSelector(state => state.auth);
+    const userRole = user?.role;
+
 
     let outOfStock = 0;
     products.forEach(product => {
@@ -57,10 +60,10 @@ const Dashboard = () => {
         });
     // Chart Line tính tổng doanh thu
     const lineState = {
-        labels: ["Số tiền ban đầu", "Tổng danh thu hiện tại"],
+        labels: ["Số tiền ban đầu", "Tổng doanh thu hiện tại"],
         datasets: [
             {
-                label: "TỔNG DANH THU",
+                label: "TỔNG DOANH THU",
                 backgroundColor: ["blue"],
                 hoverBackgroundColor: ["rgb(197, 72, 49)"],
                 data: [0, totalAmountall],
@@ -150,7 +153,7 @@ const Dashboard = () => {
                         </div>
 
                         <div className="col-12 col-md-10">
-                            <h1 className="my-4">Tổng quan</h1>
+                            <h1 className="my-4">Thống kê</h1>
 
                             {loading ? <Loader /> : (
                                 <Fragment>
@@ -160,7 +163,7 @@ const Dashboard = () => {
                                         <div className="col-xl-3 col-sm-6 mb-3">
                                             <div className="card text-white bg-primary o-hidden h-100">
                                                 <div className="card-body">
-                                                    <div className="text-center card-font-size">Tổng danh thu<br /> <b>{totalAmount && totalAmount.toLocaleString()} VNĐ</b>
+                                                    <div className="text-center card-font-size">Tổng doanh thu<br /> <b>{totalAmount && totalAmount.toLocaleString()} VNĐ</b>
                                                     </div>
                                                 </div>
                                                 <Link className="card-footer text-white clearfix small z-1" to="/admin/orders">
@@ -201,19 +204,26 @@ const Dashboard = () => {
                                             </div>
                                         </div>
 
-                                            <div className="col-xl-3 col-sm-6 mb-3">
-                                                <div className="card text-white bg-info o-hidden h-100">
-                                                    <div className="card-body">
-                                                        <div className="text-center card-font-size">Tổng người dùng<br /> <b>{users && users.length}</b></div>
+                                        <div
+                                            className={`col-xl-3 col-sm-6 mb-3 ${userRole === 'staff' ? 'hidden' : ''}`}
+                                        >
+                                            <div className="card text-white bg-info o-hidden h-100">
+                                                <div className="card-body">
+                                                    <div className="text-center card-font-size">
+                                                        Tổng người dùng<br /> <b>{users && users.length}</b>
                                                     </div>
-                                                    <Link className="card-footer text-white clearfix small z-1" to="/admin/users">
-                                                        <span className="float-left">Xem chi tiết</span>
-                                                        <span className="float-right">
-                                                            <i className="fa fa-angle-right"></i>
-                                                        </span>
-                                                    </Link>
                                                 </div>
+                                                <Link
+                                                    className="card-footer text-white clearfix small z-1"
+                                                    to="/admin/users"
+                                                >
+                                                    <span className="float-left">Xem chi tiết</span>
+                                                    <span className="float-right">
+                                                        <i className="fa fa-angle-right"></i>
+                                                    </span>
+                                                </Link>
                                             </div>
+                                        </div>
 
                                         <div className="col-xl-3 col-sm-6 mb-3">
                                             <div className="card text-white bg-light o-hidden h-100">

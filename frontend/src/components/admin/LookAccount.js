@@ -99,8 +99,9 @@ const LookAccount = ({ history, match }) => {
                                         value="look"
                                         onChange={(e) => setRole1(e.target.value)}
                                     >
+                                        <option value=""></option>
                                         <option value="look">Khóa tài khoản</option>
-                                        <option value="look">Khóa tài khoản</option>
+                                        <option value="look">Mở tài khoản</option>
                                     </select>
                                 </div>
 

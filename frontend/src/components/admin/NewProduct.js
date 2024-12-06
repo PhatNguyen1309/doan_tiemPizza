@@ -182,7 +182,10 @@ const NewProduct = ({ history }) => {
                                     {imagesPreview.map(img => (
                                         <img src={img} key={img} alt="Images Preview" className="mt-3 mr-2" width="55" height="52" />
                                     ))}
+
                                 </div>
+
+
                                 <button
                                     id="login_button"
                                     type="submit"

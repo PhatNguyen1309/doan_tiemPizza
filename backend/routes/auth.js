@@ -11,6 +11,7 @@ const {
     allUsers,
     getUserDetails,
     updateUser,
+    createUser,
 } = require('../controllers/authController');
 const { lookUser } = require('../middlewares/lookAccount');
 
@@ -27,9 +28,13 @@ router.route('/me').get(isAuthenticatedUser, getUserProfile)
 router.route('/password/update').put(isAuthenticatedUser, updatePassword)
 router.route('/me/update').put(isAuthenticatedUser, updateProfile)
 
-router.route('/admin/users').get(isAuthenticatedUser, authorizeRoles('admin', 'system'), allUsers)
+// Thêm route cho việc tạo người dùng mới
+router.route('/admin/user/new').post(isAuthenticatedUser, authorizeRoles('admin'), createUser);
+
+router.route('/admin/users').get(isAuthenticatedUser, authorizeRoles('admin'), allUsers)
+router.route('/admin/users1').get(isAuthenticatedUser, authorizeRoles('admin'), allUsers)
 router.route('/admin/user/:id')
-    .get(isAuthenticatedUser, authorizeRoles('admin', 'system'), getUserDetails)
-    .put(isAuthenticatedUser, authorizeRoles('admin', 'system'), updateUser)
+    .get(isAuthenticatedUser, authorizeRoles('admin'), getUserDetails)
+    .put(isAuthenticatedUser, authorizeRoles('admin'), updateUser)
 
 module.exports = router;

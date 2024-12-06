@@ -35,8 +35,6 @@ const OrdersList = ({ history }) => {
 
     }, [dispatch, alert, error, isDeleted, history])
 
-
-
     const setOrders = () => {
         const data = {
             columns: [
@@ -58,7 +56,7 @@ const OrdersList = ({ history }) => {
                 {
                     label: 'Ngày tạo hóa đơn',
                     field: 'createdAt',
-                    sort: 'asc'
+                    sort: 'desc'
                 },
                 {
                     label: 'Trạng thái',
@@ -73,12 +71,15 @@ const OrdersList = ({ history }) => {
             rows: []
         }
 
-        orders.forEach(order => {
+        // Sắp xếp orders theo createdAt giảm dần
+        const sortedOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        sortedOrders.forEach(order => {
             data.rows.push({
                 id: order._id,
                 numofItems: order.orderItems.length,
                 amount: `${order.totalPrice} VNĐ`,
-                createdAt: order.createdAt,
+                createdAt: new Date(order.createdAt).toLocaleDateString(), // Format ngày
                 status: order.orderStatus && String(order.orderStatus).includes('Đã giao hàng')
                     ? <p style={{ color: 'green' }}>{order.orderStatus}</p>
                     : <p style={{ color: 'red' }}>{order.orderStatus}</p>,
@@ -87,14 +88,12 @@ const OrdersList = ({ history }) => {
                     <Link to={`/admin/order/${order._id}`} className="btn btn-primary py-1 px-2">
                         <i className="fa fa-eye"></i>
                     </Link>
-
                 </Fragment>
             })
-        })
+        });
 
         return data;
     }
-
 
     return (
         <Fragment>
@@ -121,7 +120,6 @@ const OrdersList = ({ history }) => {
                     </Fragment>
                 </div>
             </div>
-
         </Fragment>
     )
 }

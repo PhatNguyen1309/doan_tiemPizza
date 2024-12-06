@@ -13,14 +13,6 @@ const orderSchema = mongoose.Schema({
         phoneNo: {
             type: String,
             required: true
-        },
-        postalCode: {
-            type: String,
-            required: true
-        },
-        country: {
-            type: String,
-            required: true
         }
     },
     user: {

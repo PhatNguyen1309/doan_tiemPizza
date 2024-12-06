@@ -25,9 +25,9 @@ const OrderDetails = ({ match }) => {
         }
     }, [dispatch, alert, error, match.params.id])
 
-    const shippingDetails = shippingInfo && `${shippingInfo.address}, ${shippingInfo.city}, ${shippingInfo.postalCode}, ${shippingInfo.country}`
+    const shippingDetails = shippingInfo && `${shippingInfo.address}, ${shippingInfo.city}` // Loại bỏ postalCode và country
 
-    const isPaid = paymentInfo && paymentInfo.status === 'succeeded' ? true : false
+    const isPaid = paymentInfo && paymentInfo.status === 'succeeded'
 
     return (
         <Fragment>
@@ -43,7 +43,7 @@ const OrderDetails = ({ match }) => {
                             <h4 className="mb-4">Thông tin đặt hàng</h4>
                             <p><b>Tên người nhận:</b> {user && user.name}</p>
                             <p><b>Số điện thoại:</b> {shippingInfo && shippingInfo.phoneNo}</p>
-                            <p className="mb-4"><b>Địa chỉ giao:</b>{shippingDetails}</p>
+                            <p className="mb-4"><b>Địa chỉ giao:</b> {shippingDetails}</p>
                             <p><b>Tổng tiền:</b> {totalPrice}đ</p>
 
                             <hr />
@@ -51,10 +51,10 @@ const OrderDetails = ({ match }) => {
                             <h4 className="my-4">Thanh toán</h4>
                             <p className={isPaid ? "greenColor" : "redColor"}><b>{isPaid ? "Đã thanh toán" : "Chưa thanh toán"}</b></p>
 
-
                             <h4 className="my-4">Tình trạng đặt hàng:</h4>
-                            <p className={order.orderStatus && String(order.orderStatus).includes('Đã giao hàng') ? "greenColor" : "redColor"} ><b>{orderStatus}</b></p>
-
+                            <p className={orderStatus && String(orderStatus).includes('Đã giao hàng') ? "greenColor" : "redColor"} >
+                                <b>{orderStatus}</b>
+                            </p>
 
                             <h4 className="my-4">Sản phẩm:</h4>
 
@@ -69,7 +69,6 @@ const OrderDetails = ({ match }) => {
                                         <div className="col-5 col-lg-5">
                                             <Link to={`/products/${item.product}`}>{item.name}</Link>
                                         </div>
-
 
                                         <div className="col-4 col-lg-2 mt-4 mt-lg-0">
                                             <p>{(item.price).toLocaleString()}đ</p>

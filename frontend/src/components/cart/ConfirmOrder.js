@@ -13,7 +13,7 @@ const ConfirmOrder = ({ history }) => {
 
     // Calculate Order Prices
     const itemsPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0) // giống giống như for, foreach
-    const shippingPrice = itemsPrice > 150000 ? 0 : 10000 // tính tiền ship
+    const shippingPrice = itemsPrice > 100000 ? 0 : 10000 // tính tiền ship
     const taxPrice = Number((0.01 * itemsPrice)) // tính thuế
     const totalPrice = (itemsPrice + shippingPrice + taxPrice) // tổng tiền
 
@@ -42,8 +42,7 @@ const ConfirmOrder = ({ history }) => {
                     <h4 className="mb-3">Thông tin vận chuyển</h4>
                     <p><b>Tên khách hàng:</b> {user && user.name}</p>
                     <p><b>Số điện thoại:</b> {shippingInfo.phoneNo}</p>
-                    <p className="mb-4"><b>Địa chỉ:</b> {`${shippingInfo.address}, ${shippingInfo.city}, ${shippingInfo.postalCode}, ${shippingInfo.country}`}</p>
-
+                    <p className="mb-4"><b>Địa chỉ:</b> {`${shippingInfo.address}, ${shippingInfo.city}`}</p>
                     <hr />
                     <h4 className="mt-4">Các mặt hàng trong giỏ hàng của bạn:</h4>
 

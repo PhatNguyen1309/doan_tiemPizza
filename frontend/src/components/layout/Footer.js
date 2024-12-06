@@ -93,7 +93,7 @@ const Footer = () => {
               <div className="row">
                 <div className="col-lg-12 col-12">
                   <div className="text-center">
-                    <p>Copyright © 2022 By Nhóm 3</p>
+                    <p>Copyright © 2024 By Nhóm KPT</p>
                   </div>
                 </div>
               </div>

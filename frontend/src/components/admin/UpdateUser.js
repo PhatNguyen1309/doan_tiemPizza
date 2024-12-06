@@ -13,6 +13,8 @@ const UpdateUser = ({ history, match }) => {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [role, setRole] = useState('')
+    const [cccd, setCccd] = useState('')
+    const [bankAccount, setBankAccount] = useState('')
 
     const alert = useAlert();
     const dispatch = useDispatch();
@@ -24,13 +26,16 @@ const UpdateUser = ({ history, match }) => {
 
     useEffect(() => {
 
-        console.log(user && user._id !== userId);
         if (user && user._id !== userId) {
             dispatch(getUserDetails(userId))
         } else {
             setName(user.name);
             setEmail(user.email);
-            setRole(user.role)
+            setRole(user.role);
+            if (user.role === 'staff') {
+                setCccd(user.cccd || '');
+                setBankAccount(user.bankAccount || '');
+            }
         }
 
         if (error) {
@@ -57,10 +62,14 @@ const UpdateUser = ({ history, match }) => {
         formData.set('name', name);
         formData.set('email', email);
         formData.set('role', role);
+        
+        if (role === 'staff') {
+            formData.set('cccd', cccd);
+            formData.set('bankAccount', bankAccount);
+        }
 
         dispatch(updateUser(user._id, formData))
     }
-
 
     return (
         <Fragment>
@@ -113,10 +122,37 @@ const UpdateUser = ({ history, match }) => {
                                         <option value="user">Người dùng</option>
                                         <option value="staff">Nhân viên</option>
                                         <option value="admin">Quản trị</option>
-                                        <option value="system">Hệ thống</option> 
                                         <option value="look">Khóa tài khoản</option>
                                     </select>
                                 </div>
+
+                                {role === 'staff' && (
+                                    <>
+                                        <div className="form-group">
+                                            <label htmlFor="cccd_field">Số CCCD</label>
+                                            <input
+                                                type="text"
+                                                id="cccd_field"
+                                                className="form-control"
+                                                name='cccd'
+                                                value={cccd}
+                                                onChange={(e) => setCccd(e.target.value)}
+                                            />
+                                        </div>
+
+                                        <div className="form-group">
+                                            <label htmlFor="bankAccount_field">Tài khoản ngân hàng</label>
+                                            <input
+                                                type="text"
+                                                id="bankAccount_field"
+                                                className="form-control"
+                                                name='bankAccount'
+                                                value={bankAccount}
+                                                onChange={(e) => setBankAccount(e.target.value)}
+                                            />
+                                        </div>
+                                    </>
+                                )}
 
                                 <button type="submit" className="btn update-btn btn-block mt-4 mb-3" >Cập nhật</button>
                             </form>

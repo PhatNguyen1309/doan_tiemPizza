@@ -24,8 +24,9 @@ const products = require('./routes/product');
 const auth = require('./routes/auth');
 const payment = require('./routes/payment');
 const order = require('./routes/order');
+const supplier = require('./routes/supplier');
 
-
+app.use('/api/v1', supplier);
 app.use('/api/v1', products)
 app.use('/api/v1', auth)
 app.use('/api/v1', payment)

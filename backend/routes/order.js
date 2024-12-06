@@ -19,9 +19,9 @@ router.route('/order/:id').get(isAuthenticatedUser, getSingleOrder);
 router.route('/orders/me').get(isAuthenticatedUser, myOrders);
 
 router.route('/admin/orders/income').get(getMonthlyIncome);
-router.route('/admin/orders/').get(isAuthenticatedUser, authorizeRoles('admin', 'system', 'staff'), allOrders);
+router.route('/admin/orders/').get(isAuthenticatedUser, authorizeRoles('admin', 'staff'), allOrders);
 router.route('/admin/order/:id')
-    .put(isAuthenticatedUser, authorizeRoles('admin', 'system', 'staff'), updateOrder)
+    .put(isAuthenticatedUser, authorizeRoles('admin', 'staff'), updateOrder)
 
 
 

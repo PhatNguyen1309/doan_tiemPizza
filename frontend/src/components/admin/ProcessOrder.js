@@ -32,7 +32,6 @@ const ProcessOrder = ({ match }) => {
             dispatch(clearErrors())
         }
 
-
         if (isUpdated) {
             alert.success('Cập nhật hóa đơn thành công');
             dispatch({ type: UPDATE_ORDER_RESET })
@@ -40,17 +39,21 @@ const ProcessOrder = ({ match }) => {
 
     }, [dispatch, alert, error, isUpdated, orderId])
 
-
     const updateOrderHandler = (id) => {
-
         const formData = new FormData();
         formData.set('status', status);
-
-        dispatch(updateOrder(id, formData))
+    
+        // Nếu trạng thái là 'Đã giao hàng' và phương thức thanh toán là COD, cập nhật trạng thái thanh toán
+        if (status === 'Đã giao hàng' && paymentInfo && paymentInfo.id === 'COD') {
+            formData.set('paymentStatus', 'succeeded');
+        }
+    
+        dispatch(updateOrder(id, formData));
     }
+    
 
-    const shippingDetails = shippingInfo && `${shippingInfo.address}, ${shippingInfo.city}, ${shippingInfo.postalCode}, ${shippingInfo.country}`
-    const isPaid = paymentInfo && paymentInfo.status === 'succeeded' ? true : false
+    const shippingDetails = shippingInfo && `${shippingInfo.address}, ${shippingInfo.city}, ${shippingInfo.phoneNo}`;
+    const isPaid = paymentInfo && paymentInfo.status === 'succeeded' ? true : false;
 
     return (
         <Fragment>
@@ -85,8 +88,6 @@ const ProcessOrder = ({ match }) => {
                                     <h4 className="my-4">Trạng thái hóa đơn:</h4>
                                     <p className={order.orderStatus && String(order.orderStatus).includes('Đã giao hàng') ? "greenColor" : "redColor"} ><b>{orderStatus}</b></p>
 
-
-
                                     <h4 className="my-4">Các mặt hàng đã đặt:</h4>
 
                                     <hr />
@@ -100,7 +101,6 @@ const ProcessOrder = ({ match }) => {
                                                 <div className="col-5 col-lg-5">
                                                     <Link to={`/products/${item.product}`}>{item.name}</Link>
                                                 </div>
-
 
                                                 <div className="col-4 col-lg-2 mt-4 mt-lg-0">
                                                     <p>{item.price} VNĐ</p>

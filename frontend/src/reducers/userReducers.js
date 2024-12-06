@@ -34,19 +34,23 @@ import {
     UPDATE_USER_FAIL,
     LOGOUT_SUCCESS,
     LOGOUT_FAIL,
+    USER_CREATE_SUCCESS,
+    USER_CREATE_FAIL,
+    USER_CREATE_REQUEST,
+    USER_CREATE_RESET,
+    DELETE_USER_RESET,
+    DELETE_USER_SUCCESS,
+    DELETE_USER_FAIL,
+    DELETE_USER_REQUEST,
     CLEAR_ERRORS
 } from '../constants/userConstants'
 
 export const authReducer = (state = { user: {} }, action) => {
     switch (action.type) {
-
         case LOGIN_REQUEST:
         case REGISTER_USER_REQUEST:
         case LOAD_USER_REQUEST:
-            return {
-                loading: true,
-                isAuthenticated: false,
-            }
+            return { loading: true, isAuthenticated: false };
 
         case LOGIN_SUCCESS:
         case REGISTER_USER_SUCCESS:
@@ -55,206 +59,176 @@ export const authReducer = (state = { user: {} }, action) => {
                 ...state,
                 loading: false,
                 isAuthenticated: true,
-                user: action.payload
-            }
+                user: action.payload,
+            };
 
         case LOGOUT_SUCCESS:
-            return {
-                loading: false,
-                isAuthenticated: false,
-                user: null
-            }
+            return { loading: false, isAuthenticated: false, user: null };
 
         case LOAD_USER_FAIL:
-            return {
-                loading: false,
-                isAuthenticated: false,
-                user: null,
-                error: action.payload
-            }
+            return { loading: false, isAuthenticated: false, user: null, error: action.payload };
 
         case LOGOUT_FAIL:
-            return {
-                ...state,
-                error: action.payload
-            }
+            return { ...state, error: action.payload };
 
         case LOGIN_FAIL:
         case REGISTER_USER_FAIL:
-            return {
-                ...state,
-                loading: false,
-                isAuthenticated: false,
-                user: null,
-                error: action.payload
-            }
+            return { ...state, loading: false, isAuthenticated: false, user: null, error: action.payload };
 
         case CLEAR_ERRORS:
-            return {
-                ...state,
-                error: null
-            }
+            return { ...state, error: null };
 
         default:
-            return state
+            return state;
     }
-}
+};
+
+export const userCreateReducer = (state = { user: {} }, action) => {
+    switch (action.type) {
+        case USER_CREATE_REQUEST:
+            return { loading: true };
+
+        case USER_CREATE_SUCCESS:
+            console.log('User created successfully:', action.payload);
+            return { ...state, success: true };
+
+        case USER_CREATE_FAIL:
+            console.log('Error creating user:', action.payload);
+            return { ...state, error: action.payload };
+
+        case USER_CREATE_RESET:
+            return { success: false, user: {} };
+
+        default:
+            return state;
+    }
+};
 
 export const userReducer = (state = {}, action) => {
     switch (action.type) {
+        case REGISTER_USER_REQUEST:
+            return { loading: true };
+
+        case REGISTER_USER_SUCCESS:
+            return { loading: false, user: action.payload };
+
+        case REGISTER_USER_FAIL:
+            return { loading: false, error: action.payload };
 
         case UPDATE_PROFILE_REQUEST:
         case UPDATE_PASSWORD_REQUEST:
         case UPDATE_USER_REQUEST:
-            return {
-                ...state,
-                loading: true
-            }
+            return { ...state, loading: true };
 
         case UPDATE_PROFILE_SUCCESS:
         case UPDATE_PASSWORD_SUCCESS:
         case UPDATE_USER_SUCCESS:
-            return {
-                ...state,
-                loading: false,
-                isUpdated: action.payload
-            }
+            return { ...state, loading: false, isUpdated: action.payload };
 
         case UPDATE_PROFILE_RESET:
         case UPDATE_PASSWORD_RESET:
         case UPDATE_USER_RESET:
-            return {
-                ...state,
-                isUpdated: false
-            }
+            return { ...state, isUpdated: false };
 
         case UPDATE_PROFILE_FAIL:
         case UPDATE_PASSWORD_FAIL:
         case UPDATE_USER_FAIL:
-            return {
-                ...state,
-                loading: false,
-                error: action.payload
-            }
+            return { ...state, loading: false, error: action.payload };
 
         case CLEAR_ERRORS:
-            return {
-                ...state,
-                error: null
-            }
+            return { ...state, error: null };
+
+        case DELETE_USER_SUCCESS:
+            return { ...state, isDeleted: true };
+
+        case DELETE_USER_FAIL:
+            return { ...state, error: action.payload };
+
+        case DELETE_USER_RESET:
+            return { ...state, isDeleted: false };
+
+        case DELETE_USER_REQUEST:
+            return { ...state, loading: true };
 
         default:
             return state;
     }
-}
+};
 
 export const forgotPasswordReducer = (state = {}, action) => {
     switch (action.type) {
-
         case FORGOT_PASSWORD_REQUEST:
         case NEW_PASSWORD_REQUEST:
-            return {
-                ...state,
-                loading: true,
-                error: null
-            }
+            return { ...state, loading: true, error: null };
 
         case FORGOT_PASSWORD_SUCCESS:
-            return {
-                ...state,
-                loading: false,
-                message: action.payload
-            }
+            return { ...state, loading: false, message: action.payload };
 
         case NEW_PASSWORD_SUCCESS:
-            return {
-                ...state,
-                success: action.payload
-            }
+            return { ...state, success: action.payload };
 
         case FORGOT_PASSWORD_FAIL:
         case NEW_PASSWORD_FAIL:
-            return {
-                ...state,
-                loading: false,
-                error: action.payload
-            }
+            return { ...state, loading: false, error: action.payload };
 
         case CLEAR_ERRORS:
-            return {
-                ...state,
-                error: null
-            }
+            return { ...state, error: null };
 
         default:
             return state;
     }
-}
+};
 
 export const allUsersReducer = (state = { users: [] }, action) => {
     switch (action.type) {
-
         case ALL_USERS_REQUEST:
-            return {
-                ...state,
-                loading: true,
-            }
+            return { ...state, loading: true };
 
         case ALL_USERS_SUCCESS:
-            return {
-                ...state,
-                loading: false,
-                users: action.payload
-            }
+            return { ...state, loading: false, users: action.payload };
 
         case ALL_USERS_FAIL:
-            return {
-                ...state,
-                loading: false,
-                error: action.payload
-            }
+            return { ...state, loading: false, error: action.payload };
 
         case CLEAR_ERRORS:
-            return {
-                ...state,
-                error: null
-            }
+            return { ...state, error: null };
 
         default:
             return state;
     }
-}
+};
 
 export const userDetailsReducer = (state = { user: {} }, action) => {
     switch (action.type) {
-
         case USER_DETAILS_REQUEST:
-            return {
-                ...state,
-                loading: true,
-            }
+            return { ...state, loading: true };
 
         case USER_DETAILS_SUCCESS:
-            return {
-                ...state,
-                loading: false,
-                user: action.payload
-            }
+            return { ...state, loading: false, user: action.payload };
 
         case USER_DETAILS_FAIL:
-            return {
-                ...state,
-                loading: false,
-                error: action.payload
-            }
+            return { ...state, loading: false, error: action.payload };
 
         case CLEAR_ERRORS:
-            return {
-                ...state,
-                error: null
-            }
+            return { ...state, error: null };
 
         default:
             return state;
     }
-}
+};
+
+export const userDeleteReducer = (state = {}, action) => {
+    switch (action.type) {
+        case DELETE_USER_REQUEST:
+            return { loading: true };
+
+        case DELETE_USER_SUCCESS:
+            return { loading: false, isDeleted: true };
+
+        case DELETE_USER_FAIL:
+            return { loading: false, error: action.payload };
+
+        default:
+            return state;
+    }
+};

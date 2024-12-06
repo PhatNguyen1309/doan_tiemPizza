@@ -1,6 +1,4 @@
 import React, { Fragment, useState } from 'react'
-// import { countries } from 'countries-list'
-
 import MetaData from '../layout/MetaData'
 import CheckoutSteps from './CheckoutSteps'
 
@@ -9,28 +7,25 @@ import { saveShippingInfo } from '../../actions/cartActions'
 
 const Shipping = ({ history }) => {
 
-    // const countriesList = Object.values(countries)
-
     const { shippingInfo } = useSelector(state => state.cart)
 
     const [address, setAddress] = useState(shippingInfo.address)
     const [city, setCity] = useState(shippingInfo.city)
-    const [postalCode, setPostalCode] = useState(shippingInfo.postalCode)
     const [phoneNo, setPhoneNo] = useState(shippingInfo.phoneNo)
-    const [country, setCountry] = useState('Vietnam')
+    const [country] = useState('Vietnam')  // Quốc gia mặc định là Vietnam
 
     const dispatch = useDispatch();
 
     const submitHandler = (e) => {
         e.preventDefault()
 
-        dispatch(saveShippingInfo({ address, city, phoneNo, postalCode, country }))
+        // Lưu thông tin vận chuyển không có postalCode và country
+        dispatch(saveShippingInfo({ address, city, phoneNo }))
         history.push('/confirm')
     }
 
     return (
         <Fragment>
-
             <MetaData title={'Thông tin vận chuyển'} />
 
             <CheckoutSteps shipping />
@@ -75,32 +70,7 @@ const Shipping = ({ history }) => {
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="postal_code_field">Mã bưu điện</label>
-                            <input
-                                type="number"
-                                id="postal_code_field"
-                                className="form-control"
-                                value={postalCode}
-                                onChange={(e) => setPostalCode(e.target.value)}
-                                required
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="country_field">Quốc gia</label>
-                            <input
-                                type="text"
-                                id="country_field"
-                                className="form-control"
-                                value={country}
-                                onChange={(e) => setCountry(e.target.value)}
-                                required
-                                disabled 
-                            />
-                        </div>
- 
-
+                        {/* Không hiển thị và không lưu postalCode và country */}
                         <button
                             id="shipping_btn"
                             type="submit"

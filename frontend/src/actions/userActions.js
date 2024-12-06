@@ -32,35 +32,44 @@ import {
     UPDATE_USER_FAIL,
     LOGOUT_SUCCESS,
     LOGOUT_FAIL,
+    USER_CREATE_REQUEST,
+    USER_CREATE_SUCCESS,
+    USER_CREATE_FAIL,
     CLEAR_ERRORS
 } from '../constants/userConstants'
 
 // Login
 export const login = (email, password) => async (dispatch) => {
     try {
-
-        dispatch({ type: LOGIN_REQUEST })
+        dispatch({ type: LOGIN_REQUEST });
 
         const config = {
             headers: {
-                'Content-Type': 'application/json'
-            }
-        }
+                'Content-Type': 'application/json',
+            },
+        };
+        // Gửi yêu cầu POST đến API
+        const { data } = await axios.post('/api/v1/login', { email, password }, config);
 
-        const { data } = await axios.post('/api/v1/login', { email, password }, config)
-
+        // Nếu thành công, dispatch action LOGIN_SUCCESS
         dispatch({
             type: LOGIN_SUCCESS,
-            payload: data.user
-        })
-
+            payload: data.user, // Đảm bảo rằng dữ liệu user là hợp lệ
+        });
     } catch (error) {
+        // Kiểm tra nếu không có error.response (trường hợp không nhận được phản hồi từ server)
+        const errorMessage = error.response && error.response.data.message 
+            ? error.response.data.message 
+            : error.message; // fallback nếu không có error.response
+
+        // Dispatch action LOGIN_FAIL với thông báo lỗi
         dispatch({
             type: LOGIN_FAIL,
-            payload: error.response.data.message
-        })
+            payload: errorMessage, // Trả về thông báo lỗi chi tiết
+        });
     }
-}
+};
+
 
 // Register user
 export const register = (userData) => async (dispatch) => {
@@ -260,7 +269,6 @@ export const allUsers = () => async (dispatch) => {
 // Update user - ADMIN
 export const updateUser = (id, userData) => async (dispatch) => {
     try {
-
         dispatch({ type: UPDATE_USER_REQUEST })
 
         const config = {
@@ -269,6 +277,17 @@ export const updateUser = (id, userData) => async (dispatch) => {
             }
         }
 
+        // Kiểm tra và thêm cccd, bankAccount nếu vai trò là staff
+        if (userData.role === 'staff') {
+            if (userData.cccd) {
+                userData.cccd = userData.cccd;  // Gửi cccd
+            }
+            if (userData.bankAccount) {
+                userData.bankAccount = userData.bankAccount;  // Gửi bankAccount
+            }
+        }
+
+        // Gửi yêu cầu PUT với các dữ liệu đã cập nhật
         const { data } = await axios.put(`/api/v1/admin/user/${id}`, userData, config)
 
         dispatch({
@@ -283,6 +302,7 @@ export const updateUser = (id, userData) => async (dispatch) => {
         })
     }
 }
+
 
 // Get user details - ADMIN
 export const getUserDetails = (id) => async (dispatch) => {
@@ -306,8 +326,34 @@ export const getUserDetails = (id) => async (dispatch) => {
     }
 }
 
+// Create user - ADMIN
+export const createUser = (userData) => async (dispatch) => {
+    try {
+        dispatch({ type: USER_CREATE_REQUEST }); // Gửi yêu cầu tạo người dùng
 
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',  // Đảm bảo gửi dữ liệu với định dạng JSON
+            },
+        };
 
+        // Gửi yêu cầu POST đến API để tạo người dùng
+        const { data } = await axios.post('/api/v1/admin/user/new', userData, config);
+
+        dispatch({
+            type: USER_CREATE_SUCCESS,
+            payload: data,  // Payload là dữ liệu người dùng vừa được tạo
+        });
+    } catch (error) {
+        // Nếu có lỗi, dispatch action với lỗi nhận được từ API
+        dispatch({
+            type: USER_CREATE_FAIL,
+            payload: error.response && error.response.data.message
+                ? error.response.data.message  // Lỗi trả về từ API
+                : error.message,               // Lỗi mặc định
+        });
+    }
+};
 
 // Clear Errors
 export const clearErrors = () => async (dispatch) => {

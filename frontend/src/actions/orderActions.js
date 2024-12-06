@@ -111,13 +111,17 @@ export const allOrders = () => async (dispatch) => {
 // update order
 export const updateOrder = (id, orderData) => async (dispatch) => {
     try {
-
         dispatch({ type: UPDATE_ORDER_REQUEST })
 
         const config = {
             headers: {
                 'Content-Type': 'application/json'
             }
+        }
+
+        // Nếu trạng thái là 'Đã giao hàng' và phương thức thanh toán là COD
+        if (orderData.status === 'Đã giao hàng' && orderData.paymentStatus === 'COD') {
+            orderData.paymentStatus = 'succeeded';  // Cập nhật paymentStatus
         }
 
         const { data } = await axios.put(`/api/v1/admin/order/${id}`, orderData, config)
@@ -134,6 +138,7 @@ export const updateOrder = (id, orderData) => async (dispatch) => {
         })
     }
 }
+
 
 
 

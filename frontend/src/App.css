@@ -849,3 +849,114 @@ a {
   justify-content: flex-start;  /* Để các radio button căn trái */
   gap: 20px;  /* Khoảng cách giữa các lựa chọn */
 }
+
+.hidden {
+  visibility: hidden; /* Ẩn phần tử nhưng vẫn giữ không gian */
+  height: auto;       /* Giữ nguyên chiều cao */
+}
+
+/* Kiểu cho form trong NewUser */
+.new-user-form {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+/* Thêm khoảng cách cho các trường form */
+.new-user-form .form-group {
+  margin-bottom: 15px;
+}
+
+/* Kiểu cho các label */
+.new-user-form label {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+/* Kiểu cho input fields */
+.new-user-form input[type="text"],
+.new-user-form input[type="email"],
+.new-user-form input[type="password"],
+.new-user-form select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  margin-top: 5px;
+}
+
+/* Thêm hiệu ứng hover cho input fields */
+.new-user-form input[type="text"]:focus,
+.new-user-form input[type="email"]:focus,
+.new-user-form input[type="password"]:focus,
+.new-user-form select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.new-user-form button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  font-size: 1rem;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 100%;
+}
+
+.new-user-form button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+.new-user-form .small.text-danger {
+  font-size: 0.875rem;
+  color: #dc3545;
+  margin-top: 5px;
+}
+
+.new-user-form .form-group.staff-fields {
+  display: none;
+}
+
+.new-user-form select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.new-user-form select#role[value="staff"] ~ .staff-fields {
+  display: block;
+}
+
+.new-user-form .form-group {
+  font-size: 1.2rem;  /* Tăng kích thước font chung cho tất cả form groups */
+  margin-bottom: 20px; /* Thêm khoảng cách giữa các trường */
+}
+
+/* Màu mặc định của sao */
+.star i {
+  color: #ccc;  /* Màu xám cho sao chưa được chọn */
+}
+
+/* Sao sáng lên khi hover hoặc đã được chọn */
+.star:hover i,
+.star.hover i {
+  color: gold;
+}
+
+/* Các sao sau sẽ không sáng lên khi hover vào một sao cụ thể */
+.star:hover ~ .star i {
+  color: #ccc;
+}
+
+.review-btn {
+  opacity: 1;
+  visibility: visible;
+}

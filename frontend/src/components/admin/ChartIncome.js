@@ -2,10 +2,9 @@ import Chart from "../../components/admin/Chart";
 import { useEffect, useMemo, useState } from "react";
 import axios from 'axios';
 
-
 export default function ChartIncome() {
     const [userStats, setUserStats] = useState([]);
-
+    const [dailyStats, setDailyStats] = useState([]);
 
     const MONTHS = useMemo(
         () => [
@@ -25,28 +24,61 @@ export default function ChartIncome() {
         []
     );
 
+    const DAYS_IN_MONTH = useMemo(
+        () => Array.from({ length: 31 }, (_, i) => `Ngày ${i + 1}`),
+        []
+    );
 
     useEffect(() => {
         const getStats = async () => {
             try {
-                const res = await axios.get('/api/v1/admin/orders/income')
-                res.data.map((item) =>
-                    setUserStats((prev) => [
-                        ...prev,
-                        { name: MONTHS[item._id - 1], "Danh thu": item.total },
-                    ])
-                );
+                // Lấy doanh thu theo tháng
+                const monthlyRes = await axios.get('/api/v1/admin/orders/income');
+                
+                const monthlyStats = MONTHS.map((month, index) => {
+                    const monthData = monthlyRes.data.find(item => item._id === index + 1);
+                    return {
+                        name: month,
+                        "Danh thu": monthData ? monthData.total : 0,
+                    };
+                });
 
-            } catch { }
+                setUserStats(monthlyStats);
+
+                // Lấy doanh thu theo ngày
+                const dailyRes = await axios.get('/api/v1/admin/orders/daily-income');
+                
+                const dailyStats = DAYS_IN_MONTH.map((day, index) => {
+                    const dayData = dailyRes.data.find(item => item.date === `2024-12-${index + 1}`); // Giả sử ngày được lưu theo định dạng '2024-12-01'
+                    return {
+                        name: day,
+                        "Danh thu": dayData ? dayData.total : 0,
+                    };
+                });
+
+                setDailyStats(dailyStats);
+
+            } catch (error) {
+                console.error(error);
+            }
         };
+
         getStats();
-    }, [MONTHS]);
+    }, [MONTHS, DAYS_IN_MONTH]);
 
     return (
         <div>
+            {/* Biểu đồ doanh thu hàng tháng */}
             <Chart
                 data={userStats}
-                title="Danh thu hàng tháng"
+                title="Doanh thu hàng tháng"
+                grid
+                dataKey="Danh thu"
+            />
+            {/* Biểu đồ doanh thu theo ngày */}
+            <Chart
+                data={dailyStats}
+                title="Doanh thu hàng ngày"
                 grid
                 dataKey="Danh thu"
             />

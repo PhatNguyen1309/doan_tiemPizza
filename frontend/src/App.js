@@ -31,11 +31,16 @@ import LookAccount from './components/admin/LookAccount'
 import Dashboard from './components/admin/Dashboard'
 import ProductsList from './components/admin/ProductsList'
 import NewProduct from './components/admin/NewProduct'
+import NewUser from './components/admin/NewUser'
 import UpdateProduct from './components/admin/UpdateProduct'
 import OrdersList from './components/admin/OrdersList'
 import ProcessOrder from './components/admin/ProcessOrder'
 import UsersList from './components/admin/UsersList'
+import UsersList1 from './components/admin/UsersList1'
 import UpdateUser from './components/admin/UpdateUser'
+import SuppliersList from './components/admin/SupplierList'
+import NewSupplier from './components/admin/NewSupplier';
+import EditSupplier from './components/admin/EditSupplier';
 import ProductReviews from './components/admin/ProductReviews'
 import ProtectedRoute from './components/route/ProtectedRoute'
 import { loadUser } from './actions/userActions'
@@ -99,6 +104,7 @@ function App() {
           <ProtectedRoute path="/password/update" component={UpdatePassword} exact />
           <ProtectedRoute path="/order/:id" component={OrderDetails} exact />
 
+          <ProtectedRoute path="/admin/user" isAdminOrSystem={true} component={NewUser} exact />
           <ProtectedRoute path="/dashboard" isAdminOrSystem={true} component={Dashboard} exact />
           <ProtectedRoute path="/admin/products" isAdminOrSystem={true} component={ProductsList} exact />
           <ProtectedRoute path="/admin/product" isAdminOrSystem={true} component={NewProduct} exact />
@@ -106,9 +112,14 @@ function App() {
           <ProtectedRoute path="/admin/orders" isAdminOrSystem={true} component={OrdersList} exact />
           <ProtectedRoute path="/admin/order/:id" isAdminOrSystem={true} component={ProcessOrder} exact />
           <ProtectedRoute path="/admin/users" isAdminOrSystem={true} component={UsersList} exact />
+          <ProtectedRoute path="/admin/users1" isAdminOrSystem={true} component={UsersList1} exact />
           <ProtectedRoute path="/admin/user/:id" isAdminOrSystem={true} component={UpdateUser} exact />
           <ProtectedRoute path="/admin/reviews" isAdminOrSystem={true} component={ProductReviews} exact />
           <ProtectedRoute path="/admin/look_user/:id" isAdminOrSystem={true} component={LookAccount} exact />
+          
+          <ProtectedRoute path="/admin/suppliers" isAdminOrSystem={true} component={SuppliersList} exact />
+          <ProtectedRoute path="/admin/supplier" isAdminOrSystem={true} component={NewSupplier} exact />
+          <ProtectedRoute path="/admin/supplier/:id" isAdminOrSystem={true} component={EditSupplier} exact />
 
         </div>
         <Footer />
