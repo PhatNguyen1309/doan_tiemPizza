@@ -143,3 +143,30 @@ exports.getMonthlyIncome = async (req, res, next) => {
         res.status(500).json(err);
     }
 }
+
+// GET DAY INCOME
+exports.getDailyIncome = async (req, res, next) => {
+    const date = new Date();
+    const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
+
+    try {
+        let income = await Order.aggregate([
+            { $match: { createdAt: { $gte: lastYear } } }, // Lọc đơn hàng trong năm trước
+            {
+                $project: { 
+                    day: { $dayOfYear: "$createdAt" }, // Lấy ngày trong năm từ ngày tạo đơn hàng
+                    sales: "$totalPrice", // Doanh thu của đơn hàng
+                },
+            },
+            {
+                $group: { // Nhóm theo ngày
+                    _id: "$day", // Nhóm theo ngày trong năm
+                    total: { $sum: "$sales" }, // Tổng doanh thu theo ngày
+                },
+            },
+        ]);
+        res.status(200).json(income);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+};

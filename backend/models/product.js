@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
     name: {
@@ -50,9 +50,11 @@ const productSchema = new mongoose.Schema({
             message: 'Vui lòng chọn đúng danh mục cho sản phẩm'
         }
     },
-    seller: {
-        type: String,
-        required: [true, 'Vui lòng nhập người bán sản phẩm']
+    // Thay seller bằng ObjectId tham chiếu đến Supplier
+    supplier: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Supplier', // Tham chiếu đến mô hình Supplier
+        required: [true, 'Vui lòng nhập nhà cung cấp sản phẩm']
     },
     stock: {
         type: Number,
@@ -94,6 +96,6 @@ const productSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
-})
+});
 
 module.exports = mongoose.model('Product', productSchema);

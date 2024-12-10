@@ -10,11 +10,18 @@ const Shipping = ({ history }) => {
     const { shippingInfo } = useSelector(state => state.cart)
 
     const [address, setAddress] = useState(shippingInfo.address)
-    const [city, setCity] = useState(shippingInfo.city)
+    const [city, setCity] = useState("Tp. Hồ Chí Minh")  // Mặc định là Tp. Hồ Chí Minh
     const [phoneNo, setPhoneNo] = useState(shippingInfo.phoneNo)
     const [country] = useState('Vietnam')  // Quốc gia mặc định là Vietnam
 
     const dispatch = useDispatch();
+
+    const handleCityChange = (e) => {
+        const value = e.target.value;
+        if (value.startsWith("Tp. Hồ Chí Minh")) {
+            setCity(value);  // Cho phép người dùng viết thêm sau "Tp. Hồ Chí Minh"
+        }
+    }
 
     const submitHandler = (e) => {
         e.preventDefault()
@@ -52,9 +59,8 @@ const Shipping = ({ history }) => {
                                 type="text"
                                 id="city_field"
                                 className="form-control"
-                                value={city}
-                                onChange={(e) => setCity(e.target.value)}
-                                required
+                                value={city} // Thành phố mặc định là Tp. Hồ Chí Minh
+                                onChange={handleCityChange} // Cho phép người dùng viết thêm
                             />
                         </div>
 

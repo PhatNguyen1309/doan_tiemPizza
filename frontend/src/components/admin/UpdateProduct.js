@@ -1,11 +1,10 @@
 import React, { Fragment, useState, useEffect } from 'react'
-
 import MetaData from '../layout/MetaData'
 import Sidebar from './Sidebar'
-
 import { useAlert } from 'react-alert'
 import { useDispatch, useSelector } from 'react-redux'
-import { updateProduct, getProductDetails, clearErrors } from '../../actions/productActions'
+import { updateProduct, getProductDetails,clearErrors } from '../../actions/productActions'
+import { fetchSuppliers } from '../../actions/supplierActions'; 
 import { UPDATE_PRODUCT_RESET } from '../../constants/productConstants'
 
 const UpdateProduct = ({ match, history }) => {
@@ -15,7 +14,7 @@ const UpdateProduct = ({ match, history }) => {
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('');
     const [stock, setStock] = useState(0);
-    const [seller, setSeller] = useState('');
+    const [supplier, setSupplier] = useState('');
     const [images, setImages] = useState([]);
 
     const [oldImages, setOldImages] = useState([]);
@@ -37,11 +36,11 @@ const UpdateProduct = ({ match, history }) => {
 
     const { error, product } = useSelector(state => state.productDetails)
     const { loading, error: updateError, isUpdated } = useSelector(state => state.product);
+    const { suppliers } = useSelector(state => state.suppliers);
 
     const productId = match.params.id;
 
     useEffect(() => {
-
         if (product && product._id !== productId) {
             dispatch(getProductDetails(productId));
         } else {
@@ -49,7 +48,7 @@ const UpdateProduct = ({ match, history }) => {
             setPrice(product.price);
             setDescription(product.description);
             setCategory(product.category);
-            setSeller(product.seller);
+            setSupplier(product.supplier);
             setStock(product.stock)
             setOldImages(product.images)
         }
@@ -64,15 +63,15 @@ const UpdateProduct = ({ match, history }) => {
             dispatch(clearErrors())
         }
 
-
         if (isUpdated) {
             history.push('/admin/products');
             alert.success('Product updated successfully');
             dispatch({ type: UPDATE_PRODUCT_RESET })
         }
 
-    }, [dispatch, alert, error, isUpdated, history, updateError, product, productId])
+        dispatch(fetchSuppliers());  // Gọi API để lấy danh sách nhà cung cấp
 
+    }, [dispatch, alert, error, isUpdated, history, updateError, product, productId])
 
     const submitHandler = (e) => {
         e.preventDefault();
@@ -83,7 +82,7 @@ const UpdateProduct = ({ match, history }) => {
         formData.set('description', description);
         formData.set('category', category);
         formData.set('stock', stock);
-        formData.set('seller', seller);
+        formData.set('supplier', supplier);
 
         images.forEach(image => {
             formData.append('images', image)
@@ -93,12 +92,11 @@ const UpdateProduct = ({ match, history }) => {
     }
 
     const onChange = e => {
-
         const files = Array.from(e.target.files)
 
         setImagesPreview([]);
-        setImages([])
-        setOldImages([])
+        setImages([]);
+        setOldImages([]);
 
         files.forEach(file => {
             const reader = new FileReader();
@@ -113,7 +111,6 @@ const UpdateProduct = ({ match, history }) => {
             reader.readAsDataURL(file)
         })
     }
-
 
     return (
         <Fragment>
@@ -160,9 +157,8 @@ const UpdateProduct = ({ match, history }) => {
                                     <label htmlFor="category_field">Danh mục</label>
                                     <select className="form-control" id="category_field" value={category} onChange={(e) => setCategory(e.target.value)}>
                                         {categories.map(category => (
-                                            <option key={category} value={category} >{category}</option>
+                                            <option key={category} value={category}>{category}</option>
                                         ))}
-
                                     </select>
                                 </div>
                                 <div className="form-group">
@@ -177,19 +173,21 @@ const UpdateProduct = ({ match, history }) => {
                                 </div>
 
                                 <div className="form-group">
-                                    <label htmlFor="seller_field">Xuất xứ</label>
-                                    <input
-                                        type="text"
-                                        id="seller_field"
+                                    <label htmlFor="supplier_field">Nhà cung cấp</label>
+                                    <select
                                         className="form-control"
-                                        value={seller}
-                                        onChange={(e) => setSeller(e.target.value)}
-                                    />
+                                        id="supplier_field"
+                                        value={supplier}
+                                        onChange={(e) => setSupplier(e.target.value)}
+                                    >
+                                        {suppliers && suppliers.map(sup => (
+                                            <option key={sup._id} value={sup._id}>{sup.name}</option>
+                                        ))}
+                                    </select>
                                 </div>
 
                                 <div className='form-group'>
                                     <label>Ảnh</label>
-
                                     <div className='custom-file'>
                                         <input
                                             type='file'
@@ -201,7 +199,7 @@ const UpdateProduct = ({ match, history }) => {
                                         />
                                         <label className='custom-file-label' htmlFor='customFile'>
                                             Chọn hình
-                                 </label>
+                                        </label>
                                     </div>
 
                                     {oldImages && oldImages.map(img => (
@@ -211,9 +209,7 @@ const UpdateProduct = ({ match, history }) => {
                                     {imagesPreview.map(img => (
                                         <img src={img} key={img} alt="Images Preview" className="mt-3 mr-2" width="55" height="52" />
                                     ))}
-
                                 </div>
-
 
                                 <button
                                     id="login_button"
@@ -222,16 +218,15 @@ const UpdateProduct = ({ match, history }) => {
                                     disabled={loading ? true : false}
                                 >
                                     Cập nhật
-                            </button>
+                                </button>
 
                             </form>
                         </div>
                     </Fragment>
                 </div>
             </div>
-
         </Fragment>
     )
 }
 
-export default UpdateProduct
+export default UpdateProduct;

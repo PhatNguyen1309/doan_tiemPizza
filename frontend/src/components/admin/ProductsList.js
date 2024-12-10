@@ -64,6 +64,11 @@ const ProductsList = ({ history }) => {
                     sort: 'asc'
                 },
                 {
+                    label: 'Nhà cung cấp',  // Thêm cột Nhà cung cấp
+                    field: 'supplier',
+                    sort: 'asc'
+                },
+                {
                     label: 'Hành động',
                     field: 'actions',
                 },
@@ -77,14 +82,15 @@ const ProductsList = ({ history }) => {
                 name: product.name,
                 price: `${(product.price).toLocaleString()} VNĐ`,
                 stock: product.stock,
+                supplier: product.supplier ? product.supplier.name : 'Không có', // Hiển thị tên nhà cung cấp
                 actions: <Fragment>
                     <Link to={`/admin/product/${product._id}`} className="btn btn-primary py-1 px-2">
                         <i className="fa fa-pencil"></i>
                     </Link>
-                    <button className="btn btn-danger py-1 px-2 ml-2" data-toggle="modal" data-target="#exampleModal" >
+                    <button className="btn btn-danger py-1 px-2 ml-2" data-toggle="modal" data-target="#exampleModal">
                         <i className="fa fa-trash"></i>
                     </button>
-                    {/* model delete */}
+                    {/* Model delete */}
                     <div>
                         <div className="modal fade" id="exampleModal" tabIndex={-1} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div className="modal-dialog" role="document">
@@ -95,7 +101,7 @@ const ProductsList = ({ history }) => {
                                             <span aria-hidden="true">×</span>
                                         </button>
                                     </div>
-                                    <div class="modal-body">
+                                    <div className="modal-body">
                                         Bạn có muốn xóa không
                                     </div>
                                     <div className="modal-footer">
@@ -109,7 +115,7 @@ const ProductsList = ({ history }) => {
                 </Fragment>
             })
         })
-
+    
         return data;
     }
 

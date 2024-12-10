@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 import { Route, Link } from 'react-router-dom'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -16,6 +16,16 @@ const Header = () => {
     const { user, loading } = useSelector(state => state.auth)
     const { cartItems } = useSelector(state => state.cart)
 
+    const [showBoxChat, setShowBoxChat] = useState(true);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowBoxChat(false);
+        }, 10000); // Boxchat sẽ tự tắt sau 10 giây
+
+        return () => clearTimeout(timer); // Dọn dẹp timer khi component unmount
+    }, []);
+
     const logoutHandler = () => {
         dispatch(logout());
         alert.success('Đăng xuất thành công')
@@ -23,6 +33,39 @@ const Header = () => {
 
     return (
         <Fragment>
+            {/* Boxchat */}
+            {showBoxChat && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        bottom: '20px',
+                        right: '20px',
+                        backgroundColor: '#f8f9fa',
+                        borderRadius: '10px',
+                        boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+                        padding: '15px',
+                        zIndex: 1000,
+                        width: '300px',
+                    }}
+                >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <p style={{ margin: 0, fontSize: '16px' }}>Shop chỉ giao đồ ăn trong khu vực thành phố Hồ Chí Minh mong quý khách thông cảm.</p>
+                        <button
+                            onClick={() => setShowBoxChat(false)}
+                            style={{
+                                background: 'none',
+                                border: 'none',
+                                fontSize: '16px',
+                                cursor: 'pointer',
+                                color: '#999'
+                            }}
+                        >
+                            ✕
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <nav className="navbar row">
                 <div className="col-12 col-md-3">
                     <div className="navbar-brand">
@@ -42,7 +85,7 @@ const Header = () => {
                     ) : (
                         <Link to="/cart" style={{ textDecoration: 'none' }} >
                             <span id="cart" className="ml-3">Giỏ hàng</span>
-                            <span className="ml-1" id="cart_count"><i class="bi bi-cart4"></i>{cartItems.length}</span>
+                            <span className="ml-1" id="cart_count"><i className="bi bi-cart4"></i>{cartItems.length}</span>
                         </Link>
                     )}
 

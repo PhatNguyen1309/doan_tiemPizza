@@ -43,13 +43,15 @@ const ProcessOrder = ({ match }) => {
         const formData = new FormData();
         formData.set('status', status);
     
-        // Nếu trạng thái là 'Đã giao hàng' và phương thức thanh toán là COD, cập nhật trạng thái thanh toán
-        if (status === 'Đã giao hàng' && paymentInfo && paymentInfo.id === 'COD') {
+        // Nếu trạng thái là 'Đã đặt hàng', tự động cập nhật thanh toán thành 'Đã thanh toán'
+        if (status === 'Đã đặt hàng') {
+            formData.set('paymentStatus', 'succeeded');
+        } else if (status === 'Đã giao hàng' && paymentInfo && paymentInfo.id === 'COD') {
             formData.set('paymentStatus', 'succeeded');
         }
     
         dispatch(updateOrder(id, formData));
-    }
+    };
     
 
     const shippingDetails = shippingInfo && `${shippingInfo.address}, ${shippingInfo.city}, ${shippingInfo.phoneNo}`;

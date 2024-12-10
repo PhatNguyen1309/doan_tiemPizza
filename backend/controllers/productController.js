@@ -28,9 +28,10 @@ exports.newProduct = catchAsyncErrors(async (req, res, next) => {
         })
     }
 
-    req.body.images = imagesLinks
+    req.body.images = imagesLinks;
     req.body.user = req.user.id;
 
+    // Thay 'seller' thành 'supplier'
     const product = await Product.create(req.body);
 
     res.status(201).json({
@@ -38,6 +39,7 @@ exports.newProduct = catchAsyncErrors(async (req, res, next) => {
         product
     })
 })
+
 
 
 // Get all products   =>   /api/v1/products?keyword=apple
@@ -135,12 +137,10 @@ exports.updateProduct = catchAsyncErrors(async (req, res, next) => {
             })
         }
 
-        req.body.images = imagesLinks
-
+        req.body.images = imagesLinks;
     }
 
-
-
+    // Thay 'seller' thành 'supplier'
     product = await Product.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true,
@@ -151,8 +151,8 @@ exports.updateProduct = catchAsyncErrors(async (req, res, next) => {
         success: true,
         product
     })
-
 })
+
 
 // Delete Product   =>   /api/v1/admin/product/:id
 exports.deleteProduct = catchAsyncErrors(async (req, res, next) => {

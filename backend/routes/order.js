@@ -7,7 +7,8 @@ const {
     myOrders,
     allOrders,
     updateOrder,
-    getMonthlyIncome
+    getMonthlyIncome,
+    getDailyIncome
 
 } = require('../controllers/orderController')
 
@@ -19,6 +20,7 @@ router.route('/order/:id').get(isAuthenticatedUser, getSingleOrder);
 router.route('/orders/me').get(isAuthenticatedUser, myOrders);
 
 router.route('/admin/orders/income').get(getMonthlyIncome);
+router.route('/admin/orders/daily-income').get(getDailyIncome);
 router.route('/admin/orders/').get(isAuthenticatedUser, authorizeRoles('admin', 'staff'), allOrders);
 router.route('/admin/order/:id')
     .put(isAuthenticatedUser, authorizeRoles('admin', 'staff'), updateOrder)
