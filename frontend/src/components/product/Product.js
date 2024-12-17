@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom'
 // import { useDispatch } from 'react-redux'
 // import { useAlert } from 'react-alert';
 
-
-
 const Product = ({ product, col}) => {
 
     return (

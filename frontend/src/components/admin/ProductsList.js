@@ -37,7 +37,7 @@ const ProductsList = ({ history }) => {
             history.push('/admin/products');
             dispatch({ type: DELETE_PRODUCT_RESET })
         }
-
+        console.log(products);
     }, [dispatch, alert, error, deleteError, isDeleted, history])
 
     const setProducts = () => {

@@ -97,7 +97,7 @@ const ProductDetails = ({ match }) => {
         }
 
         if (crust === "Thick") {
-            finalPrice += 30000; // Tăng giá thêm 30,000 nếu chọn đế dày
+            finalPrice += 40000; // Tăng giá thêm 30,000 nếu chọn đế dày
         }
 
         return finalPrice.toLocaleString();
@@ -210,7 +210,7 @@ const ProductDetails = ({ match }) => {
                             <h4 className="mt-2">Mô tả:</h4>
                             <p>{product.description}</p>
                             <hr />
-                            <p id="product_seller mb-3">Xuất xứ: <strong>{product.seller}</strong></p>
+                            <p id="product_supplier mb-3">Nhà cung cấp: <strong>{product.supplier && product.supplier.name}</strong></p>
 
                             {user ? <button id="review_btn" type="button" className="btn btn-primary mt-4" data-toggle="modal" data-target="#ratingModal" onClick={setUserRatings}>
                                 Bình luận sản phẩm
@@ -247,7 +247,7 @@ const ProductDetails = ({ match }) => {
                                                         className="form-control mt-3"
                                                         value={comment}
                                                         onChange={(e) => setComment(e.target.value)}
-                                                    ></textarea>
+                                                    >Danh Gia</textarea>
 
                                                     <button
                                                         className="btn my-3 float-right review-btn px-4 text-white"
